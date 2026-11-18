@@ -1,0 +1,5 @@
+<%= content_tag :div, id: dom_id(post) do %>
+  <h2><%= h(post.title) %></h2>
+  <% if post.user %><p><strong>Author:</strong> <%= post.user.first_name %> <%= post.user.last_name %></p><% end %>
+  <%= simple_format(h(post.body)) %>
+<% end %>

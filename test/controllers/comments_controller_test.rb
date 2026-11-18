@@ -17,10 +17,20 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create comment" do
     assert_difference('Comment.count') do
-      post comments_url, params: { comment: { body: @comment.body, post_id: @comment.post_id } }
+      post comments_url, params: { comment: { body: @comment.body, post_id: @comment.post_id, user_id: @comment.user_id } }
     end
 
-    assert_redirected_to comment_url(Comment.last)
+    assert_redirected_to post_url(Comment.last.post)
+  end
+
+  test "should create comment via nested route with ajax" do
+    assert_difference('Comment.count') do
+      post post_comments_url(@comment.post), xhr: true, params: { comment: { body: "Ajax comment", user_id: @comment.user_id } }
+    end
+
+    assert_response :success
+    assert_equal @comment.post_id, Comment.last.post_id
+    assert_match "Ajax comment", response.body
   end
 
   test "should show comment" do
@@ -34,7 +44,7 @@ class CommentsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update comment" do
-    patch comment_url(@comment), params: { comment: { body: @comment.body, post_id: @comment.post_id } }
+    patch comment_url(@comment), params: { comment: { body: @comment.body, post_id: @comment.post_id, user_id: @comment.user_id } }
     assert_redirected_to comment_url(@comment)
   end
 
